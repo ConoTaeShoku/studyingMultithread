@@ -2,6 +2,7 @@ package server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +15,11 @@ public class ServerThread implements Runnable {
 	private ArrayList<DataOutputStream> dosList = new ArrayList<>();
 	private Map<DataOutputStream, String> nicknameList = new HashMap<>();
 
+	private boolean flag;
+
 	public ServerThread(DataInputStream dis, DataOutputStream dos, ArrayList<DataOutputStream> dosList,
 			HashMap<DataOutputStream, String> nicknameList) {
+		this.flag = false;
 		this.dis = dis;
 		this.dos = dos;
 		this.dosList = dosList;
@@ -24,7 +28,14 @@ public class ServerThread implements Runnable {
 
 	@Override
 	public void run() {
-		boolean flag = true;
+		if (!flag) {
+			try {
+				dos.writeUTF("+++ Welcome!! " + nicknameList.get(dos) + " +++");
+			} catch (IOException e) {
+				// System.out.println(e.getMessage());
+			}
+			flag = true;
+		}
 		while (flag) {
 			try {
 				String message = dis.readUTF();
@@ -35,6 +46,7 @@ public class ServerThread implements Runnable {
 				}
 			} catch (Exception e) {
 				flag = false;
+				System.out.println(nicknameList.get(dos) + " quits!!");
 				// System.out.println(e.getMessage());
 			}
 		}

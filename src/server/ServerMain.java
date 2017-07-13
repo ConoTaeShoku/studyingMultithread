@@ -60,7 +60,6 @@ public class ServerMain {
 				dos.close();
 			}
 		} catch (Exception e) {
-			System.out.println(nicknameList.get(dos) + " quits!!");
 			dosList.remove(dos);
 			// System.out.println(e.getMessage());
 		}

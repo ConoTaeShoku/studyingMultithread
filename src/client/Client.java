@@ -40,12 +40,15 @@ public class Client extends JFrame implements Runnable, ActionListener {
 		textField = new JTextField();
 		getContentPane().add(textField, BorderLayout.SOUTH);
 		textField.setColumns(10);
+		textField.requestFocus();
 		textField.addActionListener(this);
 
 		JScrollPane scrollPane = new JScrollPane();
 		getContentPane().add(scrollPane, BorderLayout.CENTER);
 		textArea = new JTextArea();
+		textArea.setEnabled(false);
 		scrollPane.setViewportView(textArea);
+		textArea.append("Enter your nickname at server~\n");
 
 		setVisible(true);
 		new Thread(this).start();
@@ -56,8 +59,6 @@ public class Client extends JFrame implements Runnable, ActionListener {
 			socket = new Socket("localhost", 8989);
 			dos = new DataOutputStream(socket.getOutputStream());
 			dis = new DataInputStream(socket.getInputStream());
-
-			// nickname = ci.getNickname(ci.getDos());
 			buildClientWindow();
 		} catch (Exception e) {
 			// System.out.println(e.getMessage());
