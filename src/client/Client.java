@@ -14,8 +14,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import server.ChatInformation;
-
 public class Client extends JFrame implements Runnable, ActionListener {
 
 	private Socket socket;
@@ -25,12 +23,11 @@ public class Client extends JFrame implements Runnable, ActionListener {
 	private JTextField textField;
 	private JTextArea textArea;
 
-	private String nickname;
-	private ChatInformation ci;
-
 	public Client() {
-		ci = new ChatInformation();
+		connect();
+	}
 
+	public void buildClientWindow() {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -39,7 +36,7 @@ public class Client extends JFrame implements Runnable, ActionListener {
 			}
 		});
 		setSize(300, 400);
-
+		setTitle("Let's Chat!");
 		textField = new JTextField();
 		getContentPane().add(textField, BorderLayout.SOUTH);
 		textField.setColumns(10);
@@ -50,10 +47,8 @@ public class Client extends JFrame implements Runnable, ActionListener {
 		textArea = new JTextArea();
 		scrollPane.setViewportView(textArea);
 
-		connect();
-		new Thread(this).start();
-		setTitle(nickname);
 		setVisible(true);
+		new Thread(this).start();
 	}
 
 	public void connect() {
@@ -62,6 +57,8 @@ public class Client extends JFrame implements Runnable, ActionListener {
 			dos = new DataOutputStream(socket.getOutputStream());
 			dis = new DataInputStream(socket.getInputStream());
 
+			// nickname = ci.getNickname(ci.getDos());
+			buildClientWindow();
 		} catch (Exception e) {
 			// System.out.println(e.getMessage());
 		}
@@ -79,7 +76,6 @@ public class Client extends JFrame implements Runnable, ActionListener {
 			if (dos != null) {
 				dos.close();
 			}
-			System.out.println("Bye bye " + nickname + "~!!!");
 		} catch (Exception e) {
 			// System.out.println(e.getMessage());
 		}
@@ -98,7 +94,7 @@ public class Client extends JFrame implements Runnable, ActionListener {
 				dos.writeUTF(sending);
 				textField.setText("");
 			} catch (Exception e) {
-				disconnect();
+				// disconnect();
 				// System.out.println(e.getMessage());
 			}
 		}

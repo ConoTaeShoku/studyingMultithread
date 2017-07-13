@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class ServerMain {
@@ -13,11 +15,11 @@ public class ServerMain {
 	private DataInputStream dis;
 	private DataOutputStream dos;
 
-	private ChatInformation ci;
+	public static ArrayList<DataOutputStream> dosList = new ArrayList<>();
+	public static HashMap<DataOutputStream, String> nicknameList = new HashMap<>();
 
 	public ServerMain() {
 
-		ci = new ChatInformation();
 		Scanner scanner = new Scanner(System.in);
 
 		try {
@@ -33,10 +35,10 @@ public class ServerMain {
 				dis = new DataInputStream(socket.getInputStream());
 				dos = new DataOutputStream(socket.getOutputStream());
 
-				ci.addNickname(dos, nickname);
-				ci.addDos(dos);
+				nicknameList.put(dos, nickname);
+				dosList.add(dos);
 
-				ServerThread st = new ServerThread(dis, dos, ci.getDosList(), ci.getNicknameList());
+				ServerThread st = new ServerThread(dis, dos, dosList, nicknameList);
 				Thread th = new Thread(st);
 				th.setDaemon(true);
 				th.start();
@@ -58,8 +60,8 @@ public class ServerMain {
 				dos.close();
 			}
 		} catch (Exception e) {
-			System.out.println(ci.getNickname(dos) + " quits!!");
-			ci.removeDos(dos);
+			System.out.println(nicknameList.get(dos) + " quits!!");
+			dosList.remove(dos);
 			// System.out.println(e.getMessage());
 		}
 	}
